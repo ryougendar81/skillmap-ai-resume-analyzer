@@ -51,13 +51,13 @@ SkillMap/
 ## 📸 Screenshots
 
 ### 🏠 Landing Page
-![SkillMap Landing Page](screenshots/landing.png)
+![SkillMap Landing Page](./screenshots/landing.png)
 
 ### 📄 Resume Analyzer
-![Resume Analyzer](screenshots/analyzer.png)
+![Resume Analyzer](./screenshots/analyzer.png)
 
 ### 📊 Analysis Results
-![Analysis Results](screenshots/results.png)
+![Analysis Results](./screenshots/results.png)
 
 ### 🤖 AI Career Chatbot
-![AI Career Chatbot](screenshots/chatbot.png)
+![AI Career Chatbot](./screenshots/chatbot.png)
