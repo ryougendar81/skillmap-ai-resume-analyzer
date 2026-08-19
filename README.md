@@ -46,3 +46,18 @@ SkillMap/
 ├── manage.py
 ├── requirements.txt
 └── README.md
+
+
+## 📸 Screenshots
+
+### 🏠 Landing Page
+![SkillMap Landing Page](screenshots/landing.png)
+
+### 📄 Resume Analyzer
+![Resume Analyzer](screenshots/analyzer.png)
+
+### 📊 Analysis Results
+![Analysis Results](screenshots/results.png)
+
+### 🤖 AI Career Chatbot
+![AI Career Chatbot](screenshots/chatbot.png)
