@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    body {
+        background: #050816;
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .hero {
+        text-align: center;
+        padding: 100px 20px;
+    }
+
+    .hero h1 {
+        font-size: 76px;
+        line-height: 1.1;
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    .hero span {
+        color: #7c5cff;
+    }
+
+    .hero p {
+        font-size: 24px;
+        color: #b0b0d0;
+        margin-top: 25px;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-buttons {
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        background: linear-gradient(135deg, #7c5cff, #5a38ff);
+        padding: 16px 30px;
+        border-radius: 14px;
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .btn:hover {
+        transform: scale(1.05);
+    }
+
+    .secondary-btn {
+        background: #111827;
+    }
+
+    .how-it-works {
+        max-width: 1100px;
+        margin: 80px auto;
+        padding: 30px;
+        background: #111827;
+        border-radius: 24px;
+    }
+
+    .how-it-works h2 {
+        text-align: center;
+        font-size: 42px;
+        margin-bottom: 40px;
+    }
+
+    .steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+    .step {
+        background: #1a2235;
+        padding: 25px;
+        border-radius: 18px;
+        transition: 0.3s;
+    }
+
+    .step:hover {
+        transform: translateY(-8px);
+    }
+
+    .step h3 {
+        color: #7c5cff;
+        margin-bottom: 12px;
+    }
+
+    .pricing {
+        padding: 100px 60px;
+        text-align: center;
+    }
+
+    .pricing h2 {
+        font-size: 52px;
+    }
+
+    .pricing-cards {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        margin-top: 50px;
+        flex-wrap: wrap;
+    }
+
+    .card {
+        background: #111827;
+        padding: 40px;
+        border-radius: 24px;
+        width: 420px;
+        transition: 0.3s;
+        border: 1px solid transparent;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        border-color: #7c5cff;
+    }
+
+    .price {
+        font-size: 54px;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+
+    .features {
+        text-align: left;
+        margin: 30px 0;
+    }
+
+    .features p {
+        margin: 14px 0;
+        color: #ddd;
+    }
+
+    .testimonial {
+        padding: 100px 60px;
+        text-align: center;
+    }
+
+    .testimonial-box {
+        background: #111827;
+        padding: 40px;
+        border-radius: 24px;
+        max-width: 800px;
+        margin: auto;
+        font-size: 22px;
+        color: #ddd;
+    }
+
+    .faq {
+        padding: 100px 60px;
+    }
+
+    .faq h2 {
+        text-align: center;
+        font-size: 52px;
+    }
+
+    .faq-item {
+        background: #111827;
+        padding: 25px;
+        border-radius: 16px;
+        margin: 20px auto;
+        max-width: 900px;
+    }
+
+    .faq-item h4 {
+        color: #7c5cff;
+    }
+
+    @media (max-width: 900px) {
+        .hero h1 {
+            font-size: 48px;
+        }
+
+        .steps {
+            grid-template-columns: 1fr;
+        }
+
+        .pricing {
+            padding: 60px 20px;
+        }
+    }
+</style>
+
+<section class="hero">
+    <h1>Find your <span>skills gap</span> before employers do</h1>
+
+    <p>
+        AI-powered resume intelligence to compare your resume with your dream role,
+        detect missing skills, and guide your career growth.
+    </p>
+
+    <div class="hero-buttons">
+        {% if user.is_authenticated %}
+            <a href="/dashboard/" class="btn">Analyze My Resume →</a>
+        {% else %}
+            <a href="/accounts/login/" class="btn">Analyze My Resume →</a>
+        {% endif %}
+
+        <a href="#pricing" class="btn secondary-btn">See Pricing</a>
+    </div>
+</section>
+
+<section class="how-it-works">
+    <h2>How SkillMap Works</h2>
+
+    <div class="steps">
+        <div class="step">
+            <h3>Upload Resume</h3>
+            <p>Upload PDF/DOCX or paste your resume text.</p>
+        </div>
+
+        <div class="step">
+            <h3>Add Job Description</h3>
+            <p>Paste your target job role description.</p>
+        </div>
+
+        <div class="step">
+            <h3>AI Analysis</h3>
+            <p>AI compares skills and calculates ATS compatibility.</p>
+        </div>
+
+        <div class="step">
+            <h3>Missing Skills</h3>
+            <p>Identify exact missing technical and soft skills.</p>
+        </div>
+
+        <div class="step">
+            <h3>AI Recommendations</h3>
+            <p>Get smart suggestions to improve your resume.</p>
+        </div>
+
+        <div class="step">
+            <h3>Career Chatbot</h3>
+            <p>Ask AI about projects, roadmap, and placements.</p>
+        </div>
+    </div>
+</section>
+
+<section id="pricing" class="pricing">
+    <h2>Simple Pricing</h2>
+
+    <div class="pricing-cards">
+
+        <div class="card">
+            <h3>Starter</h3>
+            <div class="price">₹0</div>
+
+            <div class="features">
+                <p>✓ 3 analyses/month</p>
+                <p>✓ Skill gap report</p>
+                <p>✓ Basic recommendations</p>
+            </div>
+
+            <a href="/accounts/register/" class="btn">Get Started Free</a>
+        </div>
+
+        <div class="card">
+            <h3>Pro</h3>
+            <div class="price">₹999/month</div>
+
+            <div class="features">
+                <p>✓ Unlimited analyses</p>
+                <p>✓ ATS optimization</p>
+                <p>✓ Resume rewrite AI</p>
+                <p>✓ Career roadmap</p>
+            </div>
+
+            <a href="/payment/" class="btn">Start Pro Trial</a>
+        </div>
+
+    </div>
+</section>
+
+<section class="testimonial">
+    <h2>What Users Say</h2>
+
+    <div class="testimonial-box">
+        “SkillMap helped me understand exactly what I was missing for Data Analyst roles.”
+        <br><br>
+        — Student User
+    </div>
+</section>
+
+<section class="faq">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+        <h4>Can I upload PDF resumes?</h4>
+        <p>Yes. PDF, DOCX, and pasted text are supported.</p>
+    </div>
+
+    <div class="faq-item">
+        <h4>Does AI really analyze skills?</h4>
+        <p>Yes. It compares resumes with job descriptions intelligently.</p>
+    </div>
+
+    <div class="faq-item">
+        <h4>Can I chat with AI?</h4>
+        <p>Yes. SkillMap includes an AI career assistant.</p>
+    </div>
+</section>
+
+{% endblock %}

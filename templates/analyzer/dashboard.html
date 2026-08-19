@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    body {
+        background: #050816;
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .dashboard-container {
+        max-width: 1350px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .card {
+        background: #111827;
+        padding: 25px;
+        border-radius: 22px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .upload-box {
+        border: 2px dashed #7c5cff;
+        padding: 35px;
+        text-align: center;
+        border-radius: 18px;
+        background: #1a2235;
+        cursor: pointer;
+        transition: 0.3s;
+        font-size: 18px;
+    }
+
+    .upload-box:hover {
+        background: #25304a;
+    }
+
+    textarea, input[type="text"] {
+        width: 100%;
+        padding: 15px;
+        border-radius: 14px;
+        border: none;
+        background: #1f2937;
+        color: white;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+
+    .btn {
+        background: linear-gradient(135deg,#7c5cff,#5a38ff);
+        color: white;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 14px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .btn:hover {
+        transform: scale(1.03);
+    }
+
+    .btn-danger {
+        background: #dc2626;
+    }
+
+    .score-circle {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#7c5cff,#5a38ff);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px auto;
+        font-size: 42px;
+        font-weight: bold;
+    }
+
+    .chat-box {
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 20px;
+        background: #0f172a;
+        border-radius: 18px;
+        margin-bottom: 20px;
+    }
+
+    .user-msg {
+        background: linear-gradient(135deg,#7c5cff,#5a38ff);
+        padding: 14px 18px;
+        border-radius: 18px;
+        margin: 12px 0;
+        max-width: 70%;
+        margin-left: auto;
+        font-size: 15px;
+    }
+
+    .ai-msg {
+        background: #1f2937;
+        padding: 14px 18px;
+        border-radius: 18px;
+        margin: 12px 0;
+        max-width: 70%;
+        font-size: 15px;
+    }
+
+    .spinner-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.85);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .spinner {
+        width: 70px;
+        height: 70px;
+        border: 6px solid #333;
+        border-top: 6px solid #7c5cff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 20px;
+        margin: 8px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .matched-badge {
+        background: #16a34a;
+    }
+
+    .missing-badge {
+        background: #dc2626;
+    }
+
+    @keyframes spin {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @media (max-width: 900px) {
+        .grid {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="spinner-overlay" id="spinnerOverlay">
+    <div class="spinner"></div>
+    <p style="margin-top:20px; font-size:20px;">Analyzing your resume with AI...</p>
+</div>
+
+<div class="dashboard-container">
+
+    <h1 style="text-align:center; font-size:48px;">AI Resume Analyzer</h1>
+
+    <div class="grid" style="display:flex; gap:20px; margin:30px 0; flex-wrap:wrap;">
+
+        <div class="card" style="flex:1; min-width:250px; text-align:center;">
+            <h3 style="color:#a78bfa;">Total Analyses</h3>
+            <div style="font-size:42px; font-weight:bold;">
+                {{ total_analyses }}
+            </div>
+        </div>
+
+        <div class="card" style="flex:1; min-width:250px; text-align:center;">
+            <h3 style="color:#4ade80;">Highest Match</h3>
+            <div style="font-size:42px; font-weight:bold;">
+                {{ highest_score }}%
+            </div>
+        </div>
+
+        <div class="card" style="flex:1; min-width:250px; text-align:center;">
+            <h3 style="color:#fbbf24;">Average Score</h3>
+            <div style="font-size:42px; font-weight:bold;">
+                {{ average_score }}%
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align:center; margin:20px 0;">
+        <a href="/dashboard/history/" class="btn">View Analysis History</a>
+    </div>
+
+    {% if error %}
+        <div class="card" style="background:#dc2626;">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" onsubmit="showSpinner()">
+        {% csrf_token %}
+
+        <div class="grid" style="display:flex; gap:25px; margin-top:30px;">
+
+            <div class="card" style="flex:1;">
+                <h3>Resume</h3>
+
+                <textarea
+                    name="resume"
+                    rows="10"
+                    placeholder="Paste your resume text here..."
+                ></textarea>
+
+                <br><br>
+
+                <div
+    class="upload-box"
+    id="dropZone"
+    onclick="document.getElementById('resumeFile').click()"
+>
+
+    <div style="font-size:60px;">
+        📄
+    </div>
+
+    <h3>Drag & Drop Resume Here</h3>
+
+    <p style="color:#9ca3af;">
+        PDF and DOCX files supported
+    </p>
+
+    <div
+        id="fileName"
+        style="
+            margin-top:15px;
+            color:#4ade80;
+            font-weight:bold;
+        "
+    ></div>
+
+</div>
+
+<input
+    id="resumeFile"
+    type="file"
+    name="resume_file"
+    accept=".pdf,.docx"
+    style="display:none;"
+>
+
+            <div class="card" style="flex:1;">
+                <h3>Job Description</h3>
+
+                <textarea
+                    name="job"
+                    rows="16"
+                    placeholder="Paste job description..."
+                    required
+                ></textarea>
+            </div>
+
+        </div>
+
+        <div style="text-align:center; margin-top:25px;">
+            <button type="submit" class="btn">
+                Analyze Resume
+            </button>
+        </div>
+
+    </form>
+
+    {% if result %}
+    <div style="margin-top:50px;">
+
+        <div class="card" style="text-align:center;">
+            <h2>Match Score</h2>
+            <div class="score-circle">
+                {{ result.match_score }}%
+            </div>
+        </div>
+
+        <div class="grid" style="display:flex; gap:20px; margin-top:20px;">
+
+            <div class="card" style="flex:1;">
+                <h3 style="color:#4ade80;">Matched Skills</h3>
+                <p>{{ result.matched_skills }}</p>
+            </div>
+
+            <div class="card" style="flex:1;">
+                <h3 style="color:#f87171;">Missing Skills</h3>
+                <p>{{ result.missing_skills }}</p>
+            </div>
+
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <h3 style="color:#fbbf24;">AI Recommendations</h3>
+            <p>{{ result.recommendations }}</p>
+        </div>
+
+        <div class="card" style="margin-top:30px;">
+            <h2>AI Career Chatbot</h2>
+
+            <div class="chat-box">
+                {% for chat in chat_history %}
+                    <div class="user-msg">
+                        {{ chat.user }}
+                    </div>
+
+                    <div class="ai-msg">
+                        {{ chat.ai }}
+                    </div>
+                {% empty %}
+                    <p style="color:#9ca3af;">
+                        Ask AI how to improve your resume, skills, projects, placements, or roadmap.
+                    </p>
+                {% endfor %}
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <input
+                    type="hidden"
+                    name="analysis_context"
+                    value="{{ result.recommendations }}"
+                >
+
+                <input
+                    type="text"
+                    name="chat_question"
+                    placeholder="Ask AI anything about your career..."
+                    required
+                >
+
+                <div style="display:flex; gap:15px; margin-top:15px;">
+                    <button type="submit" class="btn">
+                        Send
+                    </button>
+
+                    <button
+                        type="submit"
+                        name="clear_chat"
+                        value="1"
+                        class="btn btn-danger"
+                    >
+                        Clear Chat
+                    </button>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+
+function showSpinner() {
+    document.getElementById("spinnerOverlay").style.display = "flex";
+}
+
+const dropZone = document.getElementById("dropZone");
+const fileInput = document.getElementById("resumeFile");
+const fileName = document.getElementById("fileName");
+
+if (dropZone) {
+
+    dropZone.addEventListener("dragover", function(e) {
+        e.preventDefault();
+        dropZone.style.borderColor = "#4ade80";
+    });
+
+    dropZone.addEventListener("dragleave", function() {
+        dropZone.style.borderColor = "#7c5cff";
+    });
+
+    dropZone.addEventListener("drop", function(e) {
+
+        e.preventDefault();
+
+        fileInput.files = e.dataTransfer.files;
+
+        if (e.dataTransfer.files.length > 0) {
+
+            fileName.innerHTML =
+                "✅ " + e.dataTransfer.files[0].name;
+
+        }
+
+        dropZone.style.borderColor = "#4ade80";
+    });
+
+    fileInput.addEventListener("change", function() {
+
+        if (fileInput.files.length > 0) {
+
+            fileName.innerHTML =
+                "✅ " + fileInput.files[0].name;
+
+        }
+
+    });
+
+}
+
+</script>
+
+{% endblock %}

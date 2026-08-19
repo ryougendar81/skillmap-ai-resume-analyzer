@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="max-width:1000px; margin:50px auto; padding:20px; color:white;">
+
+    <h1 style="text-align:center;">Detailed Analysis Report</h1>
+
+    <div style="margin-top:40px; background:#151515; padding:30px; border-radius:20px;">
+
+        <h2>Match Score: {{ analysis.match_score }}%</h2>
+
+        <hr>
+
+        <h3 style="color:#4dff88;">Matched Skills</h3>
+        <p>{{ analysis.matched_skills }}</p>
+
+        <h3 style="color:#ff4d4d;">Missing Skills</h3>
+        <p>{{ analysis.missing_skills }}</p>
+
+        <h3 style="color:#ffd24d;">Recommendations</h3>
+        <p>{{ analysis.recommendations }}</p>
+
+        <h3>Job Description</h3>
+        <p>{{ analysis.job_description }}</p>
+
+        <h3>Resume Text</h3>
+        <p>{{ analysis.resume_text }}</p>
+
+        <br>
+
+        <div style="display:flex; gap:15px;">
+
+            <a href="/dashboard/history/"
+               style="
+               padding:12px 20px;
+               background:#7c5cff;
+               color:white;
+               text-decoration:none;
+               border-radius:10px;
+               ">
+               Back to History
+            </a>
+
+            <a href="/dashboard/pdf/{{ analysis.id }}/"
+               style="
+               padding:12px 20px;
+               background:#00b894;
+               color:white;
+               text-decoration:none;
+               border-radius:10px;
+               ">
+               Download PDF Report
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
